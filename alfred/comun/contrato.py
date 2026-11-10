@@ -36,6 +36,7 @@ class Informe:
     resumen: str
     resultados: list[dict] = field(default_factory=list)
     fallos: list[dict] = field(default_factory=list)  # fallos parciales: no detienen el lote
+    omitidos: list[dict] = field(default_factory=list)  # no se procesaron a propósito
 
 
 def _imprimir(linea: str) -> None:

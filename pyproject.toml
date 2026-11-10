@@ -12,6 +12,9 @@ dependencies = [
     "psycopg[binary]>=3.2",
     "sqlalchemy>=2.0",
     "alembic>=1.13",
+    "python-multipart>=0.0.9",
+    "pillow>=10.4",
+    "pillow-heif>=0.20",
 ]
 
 [project.optional-dependencies]
@@ -26,6 +29,7 @@ include = ["alfred*"]
 
 [tool.setuptools.package-data]
 "alfred.nucleo.web" = ["plantillas/*.html", "estaticos/*"]
+"alfred.minijobs.conversor_medios" = ["manifiesto.toml"]
 "alfred.nucleo.datos" = ["migraciones/script.py.mako", "migraciones/versions/*.py"]
 
 [tool.pytest.ini_options]

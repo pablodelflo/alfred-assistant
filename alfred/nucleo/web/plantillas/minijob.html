@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block contenido %}
+<p><a href="/">← Catálogo</a></p>
+<h1>{{ m.nombre }}</h1>
+<p>{{ m.descripcion }}</p>
+
+{% if error_general %}<p class="aviso" role="alert">{{ error_general }}</p>{% endif %}
+
+<form method="post" action="/catalogo/{{ m.id }}/lanzar" enctype="multipart/form-data" class="subida">
+{% for c in m.entradas %}
+  <div class="campo">
+    <label for="c_{{ c.id }}"><strong>{{ c.etiqueta }}</strong></label>
+    {% if c.tipo == 'seleccion' %}
+      {% set actual = valores.get(c.id, c.defecto) %}
+      <select id="c_{{ c.id }}" name="{{ c.id }}">
+        {% for o in c.opciones_disponibles %}<option value="{{ o.valor }}" {% if o.valor == actual %}selected{% endif %}>{{ o.etiqueta }}</option>{% endfor %}
+      </select>
+    {% elif c.tipo == 'entero' %}
+      <input id="c_{{ c.id }}" type="number" name="{{ c.id }}" value="{{ valores.get(c.id, c.defecto) }}"
+             {% if c.minimo is not none %}min="{{ c.minimo }}"{% endif %} {% if c.maximo is not none %}max="{{ c.maximo }}"{% endif %}>
+    {% elif c.tipo == 'booleano' %}
+      <input id="c_{{ c.id }}" type="checkbox" name="{{ c.id }}" {% if ((c.id in valores) if valores else c.defecto) %}checked{% endif %}>
+    {% elif c.tipo == 'ficheros' %}
+      <div>
+        <input id="c_{{ c.id }}" type="file" name="{{ c.id }}" multiple
+               accept="{{ c.extensiones|join(',') }}" data-extensiones="{{ c.extensiones|join(',') }}">
+      </div>
+      <div>
+        <small>o una carpeta entera:</small>
+        <input type="file" name="{{ c.id }}" webkitdirectory multiple data-extensiones="{{ c.extensiones|join(',') }}">
+      </div>
+      <small>Máximo {{ max_ficheros }} ficheros, {{ '%g'|format(max_fichero_mb) }} MB por fichero y {{ '%g'|format(max_lote_mb) }} MB en total.</small>
+    {% endif %}
+    {% if c.ayuda %}<br><small>{{ c.ayuda }}</small>{% endif %}
+    {% if errores.get(c.id) %}<br><span class="aviso" role="alert">{{ errores[c.id] }}</span>{% endif %}
+  </div>
+{% endfor %}
+  <p><button type="submit">Empezar</button></p>
+  <progress class="subida-progreso" value="0" max="100" hidden></progress>
+  <p class="subida-estado" aria-live="polite"></p>
+</form>
+<script src="/estaticos/subida.js"></script>
+{% endblock %}

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import alfred.minijobs as paquete_minijobs
+from alfred.nucleo.minijobs.entradas import (Campo, dependencias_faltantes, parsear_campos,
+                                             problemas_de_disponibilidad)
 
 CAMPOS_OBLIGATORIOS = ("id", "nombre", "descripcion", "categoria", "version", "peso", "tiempo_maximo")
 PESOS = ("ligero", "pesado")
@@ -20,6 +22,18 @@ class Minijob:
     tiempo_maximo_s: int
     ruta: Path  # carpeta del minijob
     conservacion_horas: float | None = None  # None: la de la configuración; 0: no caduca
+    entradas: tuple[Campo, ...] = ()
+    dependencias: tuple[str, ...] = ()  # módulos de Python que necesita el minijob entero
+
+    def problemas(self) -> list[str]:
+        """Motivos por los que no se puede ofrecer ahora (vacío si está disponible)."""
+        faltan = dependencias_faltantes(self.dependencias)
+        return ([f"Faltan dependencias: {', '.join(faltan)}"] if faltan else []) + \
+            problemas_de_disponibilidad(self.entradas)
+
+    @property
+    def disponible(self) -> bool:
+        return not self.problemas()
 
 
 def _carpetas_base() -> list[Path]:
@@ -48,7 +62,9 @@ def _leer(manifiesto: Path) -> Minijob:
         raise ValueError("falta ejecutar.py")
     return Minijob(id=datos["id"], nombre=datos["nombre"], descripcion=datos["descripcion"],
                    categoria=datos["categoria"], version=datos["version"], peso=datos["peso"],
-                   tiempo_maximo_s=tiempo, ruta=carpeta.resolve(), conservacion_horas=conservacion)
+                   tiempo_maximo_s=tiempo, ruta=carpeta.resolve(), conservacion_horas=conservacion,
+                   entradas=parsear_campos(datos.get("entradas", [])),
+                   dependencias=tuple(datos.get("dependencias", ())))
 
 
 def descubrir() -> tuple[list[Minijob], list[str]]:

@@ -13,6 +13,22 @@ Opcional: `conservacion_horas` (número; horas que se conservan los ficheros del
 termina, `0` = no caducan). Si falta, se usa `almacenamiento.conservacion_horas` de la configuración
 (6 por defecto). Al caducar se borra la carpeta del trabajo; su fila del historial se conserva.
 
+Opcional: `dependencias = ["modulo", ...]` (módulos de Python que necesita el minijob entero). Si
+faltan, el minijob aparece en el catálogo como «no disponible» y no se puede lanzar.
+
+### Entradas declarativas (`[[entradas]]`)
+De ellas salen el formulario y la validación (que hace el núcleo, no la pantalla). Cada una lleva
+`id`, `tipo`, `etiqueta` y, opcionalmente, `ayuda`, `obligatorio` y `defecto`.
+
+| tipo | extras | valor que recibe `ctx.entradas[id]` |
+|---|---|---|
+| `entero` | `minimo`, `maximo` | `int` |
+| `booleano` | — | `bool` |
+| `seleccion` | `opciones = [{ valor, etiqueta, dependencias }]` | el `valor` elegido |
+| `ficheros` | `extensiones = [".heic"]` | los ficheros subidos están en `ctx.carpeta_entrada` |
+
+Las opciones de una selección cuyas `dependencias` no se cumplen en este equipo no se ofrecen.
+
 ## `ejecutar.py`
 Define `ejecutar(ctx: Contexto) -> Informe`. Solo importa de `alfred.comun.contrato`.
 
@@ -22,8 +38,8 @@ Define `ejecutar(ctx: Contexto) -> Informe`. Solo importa de `alfred.comun.contr
 - `ctx.progreso(porcentaje, mensaje)`: informa del avance.
 - `ctx.comprobar_cancelacion()`: lanza `Cancelado` si se pidió cancelar. Llamarlo a menudo;
   si el minijob no responde, el núcleo lo corta tras `gracia_cancelacion_s`.
-- Devuelve `Informe(resumen, resultados, fallos)`. Si `fallos` no está vacío, el trabajo
-  termina «con avisos». Un fichero corrupto no debe detener el lote: va a `fallos`.
+- Devuelve `Informe(resumen, resultados, fallos, omitidos)`. Si `fallos` no está vacío, el trabajo
+  termina «con avisos»; `omitidos` son elementos que no se procesaron a propósito. Un fichero corrupto no debe detener el lote: va a `fallos`.
 - Error con mensaje claro para el usuario: `raise ErrorUsuario("...")`. Cualquier otra
   excepción se guarda como detalle técnico y el usuario ve un mensaje genérico.
 

@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 
 import alfred.nucleo.minijobs.registro as reg
+from alfred.nucleo.config.lectura import Config
 from alfred.nucleo.datos.base import Base, crear_sesiones
 from alfred.nucleo.datos.modelos import Trabajo
 from alfred.nucleo.trabajos.estados import Estado
@@ -20,7 +21,8 @@ def web(tmp_path, monkeypatch):
     motor = create_engine(f"sqlite:///{tmp_path / 'bd.sqlite'}")
     Base.metadata.create_all(motor)
     sesiones = crear_sesiones(motor)
-    app = crear_app(sesiones=sesiones, zona_temporal=tmp_path / "zona")
+    config = Config(host="x", port=1, url_bd="", zona_temporal=tmp_path / "zona")
+    app = crear_app(sesiones=sesiones, config=config)
     return TestClient(app), sesiones
 
 

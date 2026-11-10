@@ -38,7 +38,8 @@ def principal(carpeta: Path, carpeta_minijob: Path) -> int:
             raise TypeError("ejecutar() debe devolver un Informe")
         _escribir(carpeta, INFORME, {"resumen": informe.resumen,
                                      "resultados": informe.resultados,
-                                     "fallos": informe.fallos})
+                                     "fallos": informe.fallos,
+                                     "omitidos": informe.omitidos})
         return 0
     except Cancelado:
         return EXIT_CANCELADO

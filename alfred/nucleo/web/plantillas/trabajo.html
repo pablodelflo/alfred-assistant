@@ -37,7 +37,21 @@
     <h3>Fallos parciales ({{ t.informe.fallos|length }})</h3>
     <ul>{% for f in t.informe.fallos %}<li>{{ f.elemento }}: {{ f.motivo }}</li>{% endfor %}</ul>
   {% endif %}
-  {% if t.informe.resultados %}<p><small>{{ t.informe.resultados|length }} resultado(s) correctos.</small></p>{% endif %}
+  {% if t.informe.omitidos %}
+    <details><summary>Omitidos ({{ t.informe.omitidos|length }})</summary>
+    <ul>{% for o in t.informe.omitidos %}<li>{{ o.elemento }}: {{ o.motivo }}</li>{% endfor %}</ul></details>
+  {% endif %}
+{% endif %}
+
+{% if ficheros %}
+  <h2>Descargas</h2>
+  <p><a class="boton" href="/trabajos/{{ t.id }}/resultado.zip">Descargar todo (ZIP)</a>
+     <small>{{ ficheros|length }} fichero(s), {{ (ficheros|sum(attribute=1))|tamano }}</small></p>
+  <details><summary>Descargar de uno en uno</summary>
+    <ul class="descargas">{% for ruta, bytes in ficheros %}
+      <li><a href="/trabajos/{{ t.id }}/ficheros/{{ ruta|urlencode }}">{{ ruta }}</a> <small>{{ bytes|tamano }}</small></li>
+    {% endfor %}</ul>
+  </details>
 {% endif %}
 
 <details><summary>Entradas</summary><pre>{{ t.entradas|tojson(indent=2) }}</pre></details>

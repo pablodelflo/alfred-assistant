@@ -4,7 +4,11 @@
 {% if minijobs %}
   <ul class="catalogo">
   {% for m in minijobs %}
-    <li><strong>{{ m.nombre }}</strong> <small>({{ m.categoria }})</small><br>{{ m.descripcion }}</li>
+    <li>
+      <strong>{% if m.disponible and m.entradas %}<a href="/catalogo/{{ m.id }}">{{ m.nombre }}</a>{% else %}{{ m.nombre }}{% endif %}</strong>
+      <small>({{ m.categoria }})</small><br>{{ m.descripcion }}
+      {% for problema in m.problemas() %}<br><span class="aviso">No disponible: {{ problema }}</span>{% endfor %}
+    </li>
   {% endfor %}
   </ul>
 {% else %}

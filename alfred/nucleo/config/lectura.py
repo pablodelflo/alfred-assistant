@@ -22,6 +22,9 @@ class Config:
     gracia_cancelacion_s: float = 10.0
     conservacion_horas: float = 6.0
     limpieza_cada_minutos: float = 10.0
+    max_fichero_mb: float = 100.0
+    max_lote_mb: float = 2048.0
+    max_ficheros: int = 1000
 
 
 def ruta_config() -> Path:
@@ -42,6 +45,12 @@ def cargar(ruta: Path | None = None) -> Config:
         cada = float(almacen.get("limpieza_cada_minutos", 10))
         if conservacion < 0:
             raise ValueError("almacenamiento.conservacion_horas no puede ser negativo (0 = no caducan)")
+        subidas = datos.get("subidas", {})
+        max_fichero = float(subidas.get("max_fichero_mb", 100))
+        max_lote = float(subidas.get("max_lote_mb", 2048))
+        max_ficheros = int(subidas.get("max_ficheros", 1000))
+        if min(max_fichero, max_lote, max_ficheros) <= 0:
+            raise ValueError("los límites de [subidas] deben ser mayores que 0")
         if cada <= 0:
             raise ValueError("almacenamiento.limpieza_cada_minutos debe ser mayor que 0")
         return Config(
@@ -56,6 +65,9 @@ def cargar(ruta: Path | None = None) -> Config:
             gracia_cancelacion_s=float(trabajos.get("gracia_cancelacion_s", 10)),
             conservacion_horas=conservacion,
             limpieza_cada_minutos=cada,
+            max_fichero_mb=max_fichero,
+            max_lote_mb=max_lote,
+            max_ficheros=max_ficheros,
         )
     except (tomllib.TOMLDecodeError, KeyError, ValueError) as e:
         raise ErrorConfig(f"Configuración inválida en {ruta}: {e!r}") from e

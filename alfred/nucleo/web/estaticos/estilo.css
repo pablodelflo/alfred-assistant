@@ -20,3 +20,11 @@ dl { display: grid; grid-template-columns: max-content 1fr; gap: .2rem 1rem; }
 dt { font-weight: bold; }
 dd { margin: 0; }
 .acciones { margin: .5rem 0 1rem; }
+
+.campo { margin: .8rem 0; }
+.campo input[type=number], .campo select { padding: .3rem; }
+.campo input[type=file] { max-width: 100%; margin: .2rem 0; }
+button, .boton { padding: .4rem .9rem; border: 1px solid #9ca3af; border-radius: .4rem; background: #f3f4f6; cursor: pointer; font: inherit; text-decoration: none; color: inherit; display: inline-block; }
+button:disabled { opacity: .5; cursor: wait; }
+.subida-progreso { width: 100%; max-width: 30rem; }
+.descargas { max-height: 20rem; overflow-y: auto; padding-left: 1.2rem; }

@@ -22,7 +22,7 @@ def comprobar_python() -> Resultado:
     return Resultado(True, f"Python {v.major}.{v.minor}.{v.micro}")
 
 
-DEPENDENCIAS = ("fastapi", "uvicorn", "jinja2", "psycopg", "sqlalchemy", "alembic")
+DEPENDENCIAS = ("fastapi", "uvicorn", "jinja2", "psycopg", "sqlalchemy", "alembic", "python_multipart")
 
 
 def comprobar_dependencias() -> Resultado:

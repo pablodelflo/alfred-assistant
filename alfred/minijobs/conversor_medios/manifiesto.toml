@@ -1,0 +1,66 @@
+id = "conversor_medios"
+nombre = "Conversor de medios"
+descripcion = "Convierte ficheros multimedia. Por ahora: fotos HEIC (iPhone) a JPG."
+categoria = "Medios"
+version = "0.1.0"
+peso = "pesado"
+tiempo_maximo = 3600
+
+[[entradas]]
+id = "conversion"
+tipo = "seleccion"
+etiqueta = "Conversión"
+obligatorio = true
+defecto = "heic_a_jpg"
+opciones = [
+  { valor = "heic_a_jpg", etiqueta = "HEIC → JPG", dependencias = ["PIL", "pillow_heif"] },
+]
+
+[[entradas]]
+id = "ficheros"
+tipo = "ficheros"
+etiqueta = "Fotos"
+ayuda = "Elige varios ficheros a la vez o una carpeta entera. Los que no sean HEIC/HEIF se ignoran."
+obligatorio = true
+extensiones = [".heic", ".heif"]
+
+[[entradas]]
+id = "calidad"
+tipo = "entero"
+etiqueta = "Calidad del JPG (1-100)"
+defecto = 90
+minimo = 1
+maximo = 100
+
+[[entradas]]
+id = "conservar_metadatos"
+tipo = "booleano"
+etiqueta = "Conservar metadatos (fecha, cámara…)"
+defecto = true
+
+[[entradas]]
+id = "quitar_gps"
+tipo = "booleano"
+etiqueta = "Quitar la ubicación GPS"
+ayuda = "Elimina la ubicación aunque se conserven el resto de metadatos."
+defecto = false
+
+[[entradas]]
+id = "redimensionar"
+tipo = "entero"
+etiqueta = "Lado mayor máximo en píxeles (0 = no redimensionar)"
+defecto = 0
+minimo = 0
+maximo = 20000
+
+[[entradas]]
+id = "si_existe"
+tipo = "seleccion"
+etiqueta = "Si el nombre ya existe"
+obligatorio = true
+defecto = "numerar"
+opciones = [
+  { valor = "numerar", etiqueta = "Numerar (foto (1).jpg)" },
+  { valor = "omitir", etiqueta = "Omitir el fichero" },
+  { valor = "sobrescribir", etiqueta = "Sobrescribir" },
+]

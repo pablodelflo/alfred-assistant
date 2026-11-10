@@ -43,8 +43,7 @@ def main() -> int:
                         max_ligeros=config.max_ligeros, max_pesados=config.max_pesados,
                         gracia_cancelacion_s=config.gracia_cancelacion_s)
 
-    uvicorn.run(crear_app(lanzador, limpiador, sesiones=sesiones, zona_temporal=zona,
-                           conservacion_horas=config.conservacion_horas), host=config.host, port=config.port)
+    uvicorn.run(crear_app(lanzador, limpiador, sesiones=sesiones, config=config), host=config.host, port=config.port)
     return 0
 
 

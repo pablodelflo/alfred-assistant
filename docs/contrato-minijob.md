@@ -9,6 +9,10 @@ Obligatorios: `id` (igual al nombre de la carpeta), `nombre`, `descripcion`, `ca
 `version`, `peso` (`"ligero"` o `"pesado"`, limita la concurrencia) y `tiempo_maximo`
 (segundos; al superarlo el núcleo corta el trabajo y lo marca como fallido).
 
+Opcional: `conservacion_horas` (número; horas que se conservan los ficheros del trabajo desde que
+termina, `0` = no caducan). Si falta, se usa `almacenamiento.conservacion_horas` de la configuración
+(6 por defecto). Al caducar se borra la carpeta del trabajo; su fila del historial se conserva.
+
 ## `ejecutar.py`
 Define `ejecutar(ctx: Contexto) -> Informe`. Solo importa de `alfred.comun.contrato`.
 

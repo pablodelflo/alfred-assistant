@@ -54,3 +54,16 @@ def test_dependencias_faltantes(monkeypatch):
     monkeypatch.setattr(importlib.util, "find_spec", lambda nombre: None)
     r = requisitos.comprobar_dependencias()
     assert not r.ok and "pip install -e ." in r.mensaje
+
+
+def test_conservacion_horas_opcional_y_validada(tmp_path, monkeypatch):
+    _minijob(tmp_path, "sin")
+    _minijob(tmp_path, "con")
+    (tmp_path / "con" / "manifiesto.toml").write_text(
+        BASE.format(id="con", peso="ligero", t=60) + "conservacion_horas = 48\n", encoding="utf-8")
+    _minijob(tmp_path, "mala")
+    (tmp_path / "mala" / "manifiesto.toml").write_text(
+        BASE.format(id="mala", peso="ligero", t=60) + "conservacion_horas = -2\n", encoding="utf-8")
+    validos, avisos = _descubrir(tmp_path, monkeypatch)
+    assert {m.id: m.conservacion_horas for m in validos} == {"sin": None, "con": 48}
+    assert len(avisos) == 1 and "conservacion_horas" in avisos[0]

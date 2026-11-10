@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block cabecera %}{% if hay_activos %}<meta http-equiv="refresh" content="2">{% endif %}{% endblock %}
+{% block contenido %}
+<h1>Trabajos</h1>
+{% if not trabajos %}
+  <p>Todavía no hay trabajos.</p>
+{% else %}
+  <div class="tabla-ancha">
+  <table>
+    <thead><tr><th>Trabajo</th><th>Minijob</th><th>Estado</th><th>Progreso</th><th>Creado</th><th></th></tr></thead>
+    <tbody>
+    {% for t in trabajos %}
+      <tr>
+        <td><a href="/trabajos/{{ t.id }}">{{ (t.id|string)[:8] }}</a></td>
+        <td>{{ nombres[t.minijob_id] }}</td>
+        <td><span class="estado estado-{{ t.estado }}">{{ etiquetas[t.estado] }}</span></td>
+        <td><progress value="{{ t.progreso }}" max="100"></progress> {{ t.progreso }}%
+            {% if t.mensaje_progreso and t.estado == 'en_curso' %}<br><small>{{ t.mensaje_progreso }}</small>{% endif %}</td>
+        <td>{{ t.creado_en|fecha }}</td>
+        <td>
+          {% if t.estado in ('pendiente', 'en_curso') %}
+          <form method="post" action="/trabajos/{{ t.id }}/cancelar"><button>Cancelar</button></form>
+          {% elif t.estado == 'interrumpido' and not t.ficheros_eliminados_en %}
+          <form method="post" action="/trabajos/{{ t.id }}/reintentar"><button>Reintentar</button></form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% if hay_activos %}<p><small>Esta página se actualiza sola mientras haya trabajos activos.</small></p>{% endif %}
+{% endif %}
+{% endblock %}

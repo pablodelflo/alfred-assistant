@@ -20,6 +20,8 @@ class Config:
     max_ligeros: int = 4
     max_pesados: int = 1
     gracia_cancelacion_s: float = 10.0
+    conservacion_horas: float = 6.0
+    limpieza_cada_minutos: float = 10.0
 
 
 def ruta_config() -> Path:
@@ -35,6 +37,13 @@ def cargar(ruta: Path | None = None) -> Config:
     try:
         datos = tomllib.loads(ruta.read_text(encoding="utf-8"))
         trabajos = datos.get("trabajos", {})
+        almacen = datos.get("almacenamiento", {})
+        conservacion = float(almacen.get("conservacion_horas", 6))
+        cada = float(almacen.get("limpieza_cada_minutos", 10))
+        if conservacion < 0:
+            raise ValueError("almacenamiento.conservacion_horas no puede ser negativo (0 = no caducan)")
+        if cada <= 0:
+            raise ValueError("almacenamiento.limpieza_cada_minutos debe ser mayor que 0")
         return Config(
             host=datos["servidor"].get("host", "127.0.0.1"),
             port=int(datos["servidor"].get("port", 8000)),
@@ -45,6 +54,8 @@ def cargar(ruta: Path | None = None) -> Config:
             max_ligeros=int(trabajos.get("max_ligeros", 4)),
             max_pesados=int(trabajos.get("max_pesados", 1)),
             gracia_cancelacion_s=float(trabajos.get("gracia_cancelacion_s", 10)),
+            conservacion_horas=conservacion,
+            limpieza_cada_minutos=cada,
         )
     except (tomllib.TOMLDecodeError, KeyError, ValueError) as e:
         raise ErrorConfig(f"Configuración inválida en {ruta}: {e!r}") from e

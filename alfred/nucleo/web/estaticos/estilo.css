@@ -3,3 +3,20 @@ header a { font-weight: bold; font-size: 1.2rem; text-decoration: none; }
 footer { margin-top: 3rem; font-size: .85rem; color: #666; }
 .aviso { color: #b45309; }
 pre { white-space: pre-wrap; }
+
+nav { display: inline; margin-left: 1rem; font-size: .95rem; }
+.tabla-ancha { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+progress { width: 7rem; vertical-align: middle; }
+form { display: inline; margin: 0; }
+.estado { padding: .1rem .5rem; border-radius: .6rem; background: #e5e7eb; font-size: .85rem; white-space: nowrap; }
+.estado-en_curso, .estado-cancelandose { background: #dbeafe; }
+.estado-terminado { background: #dcfce7; }
+.estado-terminado_con_avisos { background: #fef9c3; }
+.estado-fallido { background: #fee2e2; }
+.estado-interrumpido { background: #ffedd5; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: .2rem 1rem; }
+dt { font-weight: bold; }
+dd { margin: 0; }
+.acciones { margin: .5rem 0 1rem; }

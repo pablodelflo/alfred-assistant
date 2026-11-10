@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block cabecera %}{% if hay_activos %}<meta http-equiv="refresh" content="2">{% endif %}{% endblock %}
+{% block contenido %}
+<p><a href="/trabajos">← Trabajos</a></p>
+<h1>{{ nombre_minijob }} <small>{{ (t.id|string)[:8] }}</small></h1>
+
+<p><span class="estado estado-{{ t.estado }}">{{ etiquetas[t.estado] }}</span>
+   <progress value="{{ t.progreso }}" max="100"></progress> {{ t.progreso }}%
+   {% if t.mensaje_progreso and t.estado == 'en_curso' %}· {{ t.mensaje_progreso }}{% endif %}</p>
+
+<div class="acciones">
+  {% if puede_cancelar %}<form method="post" action="/trabajos/{{ t.id }}/cancelar"><button>Cancelar</button></form>{% endif %}
+  {% if puede_reintentar %}<form method="post" action="/trabajos/{{ t.id }}/reintentar"><button>Reintentar</button></form>{% endif %}
+</div>
+
+<dl>
+  <dt>Creado</dt><dd>{{ t.creado_en|fecha }}</dd>
+  <dt>Iniciado</dt><dd>{{ t.iniciado_en|fecha }}</dd>
+  <dt>Terminado</dt><dd>{{ t.terminado_en|fecha }}</dd>
+  <dt>Ficheros</dt>
+  <dd>{% if t.ficheros_eliminados_en %}eliminados el {{ t.ficheros_eliminados_en|fecha }}
+      {% elif caduca %}disponibles hasta el {{ caduca|fecha }}
+      {% elif t.estado in ('terminado', 'terminado_con_avisos', 'fallido', 'interrumpido') %}no caducan
+      {% else %}—{% endif %}</dd>
+</dl>
+
+{% if t.error_usuario %}
+  <h2>Error</h2>
+  <p class="aviso">{{ t.error_usuario }}</p>
+  {% if t.error_tecnico %}<details><summary>Detalle técnico</summary><pre>{{ t.error_tecnico }}</pre></details>{% endif %}
+{% endif %}
+
+{% if t.informe %}
+  <h2>Informe</h2>
+  <p>{{ t.informe.resumen }}</p>
+  {% if t.informe.fallos %}
+    <h3>Fallos parciales ({{ t.informe.fallos|length }})</h3>
+    <ul>{% for f in t.informe.fallos %}<li>{{ f.elemento }}: {{ f.motivo }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if t.informe.resultados %}<p><small>{{ t.informe.resultados|length }} resultado(s) correctos.</small></p>{% endif %}
+{% endif %}
+
+<details><summary>Entradas</summary><pre>{{ t.entradas|tojson(indent=2) }}</pre></details>
+{% endblock %}

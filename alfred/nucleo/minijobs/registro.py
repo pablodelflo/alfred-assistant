@@ -19,6 +19,7 @@ class Minijob:
     peso: str
     tiempo_maximo_s: int
     ruta: Path  # carpeta del minijob
+    conservacion_horas: float | None = None  # None: la de la configuración; 0: no caduca
 
 
 def _carpetas_base() -> list[Path]:
@@ -39,11 +40,15 @@ def _leer(manifiesto: Path) -> Minijob:
     tiempo = datos["tiempo_maximo"]
     if not isinstance(tiempo, int) or isinstance(tiempo, bool) or tiempo <= 0:
         raise ValueError("tiempo_maximo debe ser un entero positivo de segundos")
+    conservacion = datos.get("conservacion_horas")
+    if conservacion is not None and (isinstance(conservacion, bool) or not isinstance(conservacion, (int, float))
+                                     or conservacion < 0):
+        raise ValueError("conservacion_horas debe ser un número >= 0 (0 = no caduca)")
     if not (carpeta / "ejecutar.py").is_file():
         raise ValueError("falta ejecutar.py")
     return Minijob(id=datos["id"], nombre=datos["nombre"], descripcion=datos["descripcion"],
                    categoria=datos["categoria"], version=datos["version"], peso=datos["peso"],
-                   tiempo_maximo_s=tiempo, ruta=carpeta.resolve())
+                   tiempo_maximo_s=tiempo, ruta=carpeta.resolve(), conservacion_horas=conservacion)
 
 
 def descubrir() -> tuple[list[Minijob], list[str]]:

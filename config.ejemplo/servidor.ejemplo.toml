@@ -10,6 +10,11 @@ url = "postgresql://alfred:CAMBIAME@localhost:5432/alfred"
 
 [almacenamiento]
 zona_temporal = "datos/temporal"
+# Horas que se conservan los ficheros de un trabajo desde que termina (0 = no caducan).
+# Un minijob puede fijar la suya con conservacion_horas en su manifiesto.
+conservacion_horas = 6
+# Cada cuánto se ejecuta la limpieza de ficheros caducados
+limpieza_cada_minutos = 10
 
 [trabajos]
 # Cuántos trabajos pueden correr a la vez según el peso declarado por el minijob

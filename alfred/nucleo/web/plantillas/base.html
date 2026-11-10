@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ nombre }}</title>
   <link rel="stylesheet" href="/estaticos/estilo.css">
+  {% block cabecera %}{% endblock %}
 </head>
 <body>
-  <header><a href="/">{{ nombre }}</a></header>
+  <header>
+    <a href="/">{{ nombre }}</a>
+    <nav><a href="/">Catálogo</a> · <a href="/trabajos">Trabajos</a></nav>
+  </header>
   <main>{% block contenido %}{% endblock %}</main>
   <footer>
     {{ aviso_corto }} · {{ nombre }} v{{ version }} · <a href="/acerca-de">Acerca de</a>

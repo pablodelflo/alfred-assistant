@@ -42,3 +42,18 @@ def es_final(estado: Estado) -> bool:
 
 def transicion_valida(origen: Estado, destino: Estado) -> bool:
     return destino in TRANSICIONES[origen]
+
+
+ETIQUETAS: dict[str, str] = {
+    E.PENDIENTE.value: "Pendiente",
+    E.EN_CURSO.value: "En curso",
+    E.CANCELANDOSE.value: "Cancelándose",
+    E.TERMINADO.value: "Terminado",
+    E.TERMINADO_CON_AVISOS.value: "Terminado con avisos",
+    E.FALLIDO.value: "Fallido",
+    E.INTERRUMPIDO.value: "Interrumpido",
+    E.CANCELADO.value: "Cancelado",
+}
+
+# Estados en los que el trabajo aún está vivo (la pantalla se refresca sola mientras haya alguno).
+ACTIVOS = frozenset({E.PENDIENTE.value, E.EN_CURSO.value, E.CANCELANDOSE.value})

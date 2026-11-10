@@ -21,16 +21,21 @@ def leer_aviso() -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else NOMBRE
 
 
-def crear_app(lanzador=None) -> FastAPI:
+def crear_app(*servicios, sesiones=None, zona_temporal: Path | None = None,
+              conservacion_horas: float = 6.0) -> FastAPI:
+    """`servicios`: objetos con start()/stop() que viven mientras vive la app (lanzador, limpiador).
+
+    Si se pasan `sesiones` y `zona_temporal`, se activan las pantallas de trabajos.
+    """
     @asynccontextmanager
     async def ciclo(_app: FastAPI):
-        if lanzador:
-            lanzador.start()
+        for servicio in servicios:
+            servicio.start()
         try:
             yield
         finally:
-            if lanzador:
-                await asyncio.to_thread(lanzador.stop)
+            for servicio in reversed(servicios):
+                await asyncio.to_thread(servicio.stop)
 
     app = FastAPI(title=NOMBRE, version=VERSION, lifespan=ciclo)
     app.mount("/estaticos", StaticFiles(directory=AQUI / "estaticos"), name="estaticos")
@@ -49,5 +54,9 @@ def crear_app(lanzador=None) -> FastAPI:
     def acerca_de(request: Request):
         return PLANTILLAS.TemplateResponse(
             request, "acerca_de.html", contexto(request, aviso=leer_aviso()))
+
+    if sesiones is not None and zona_temporal is not None:
+        from alfred.nucleo.web.rutas_trabajos import crear_router
+        app.include_router(crear_router(sesiones, zona_temporal, conservacion_horas, PLANTILLAS, contexto))
 
     return app

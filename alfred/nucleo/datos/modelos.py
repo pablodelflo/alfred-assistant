@@ -29,6 +29,7 @@ class Trabajo(Base):
     creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=ahora)
     iniciado_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     terminado_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ficheros_eliminados_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Actividad(Base):

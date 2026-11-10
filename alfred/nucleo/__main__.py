@@ -28,6 +28,7 @@ def main() -> int:
     from alfred.nucleo.trabajos.lanzador import Lanzador
     from alfred.nucleo.trabajos.recuperacion import recuperar
     from alfred.nucleo.web.app import crear_app
+    from alfred.nucleo.zona_temporal.limpieza import Limpiador
 
     sesiones = crear_sesiones(crear_motor(config.url_bd))
     interrumpidos = recuperar(sesiones)
@@ -36,11 +37,14 @@ def main() -> int:
     with sesiones() as sesion:
         registrar(sesion, "sistema.arranque", f"Alfred {VERSION} arrancado")
         sesion.commit()
-    lanzador = Lanzador(sesiones, config.zona_temporal.resolve(),
+    zona = config.zona_temporal.resolve()
+    limpiador = Limpiador(sesiones, zona, config.conservacion_horas, config.limpieza_cada_minutos)
+    lanzador = Lanzador(sesiones, zona,
                         max_ligeros=config.max_ligeros, max_pesados=config.max_pesados,
                         gracia_cancelacion_s=config.gracia_cancelacion_s)
 
-    uvicorn.run(crear_app(lanzador), host=config.host, port=config.port)
+    uvicorn.run(crear_app(lanzador, limpiador, sesiones=sesiones, zona_temporal=zona,
+                           conservacion_horas=config.conservacion_horas), host=config.host, port=config.port)
     return 0
 
 

@@ -41,7 +41,7 @@ def cambiar_estado(sesion: Session, trabajo: Trabajo, destino: Estado, *,
         trabajo.terminado_en = None
         trabajo.progreso = 0
         trabajo.mensaje_progreso = None
-    if es_final(destino):
+    if es_final(destino) or destino is Estado.INTERRUMPIDO:
         trabajo.terminado_en = ahora()
     if error_usuario is not None:
         trabajo.error_usuario = error_usuario
@@ -67,5 +67,7 @@ def solicitar_cancelacion(sesion: Session, trabajo: Trabajo, zona_temporal: Path
 
 
 def reintentar(sesion: Session, trabajo: Trabajo) -> None:
-    """Solo los trabajos interrumpidos se pueden reintentar."""
+    """Solo los trabajos interrumpidos se pueden reintentar, y solo si conservan sus ficheros."""
+    if trabajo.ficheros_eliminados_en is not None:
+        raise TransicionInvalida("Los ficheros del trabajo ya se eliminaron: crea uno nuevo")
     cambiar_estado(sesion, trabajo, Estado.PENDIENTE)

@@ -25,13 +25,22 @@ def main() -> int:
     from alfred.comun.version import VERSION
     from alfred.nucleo.actividad.registro import registrar
     from alfred.nucleo.datos.base import crear_motor, crear_sesiones
+    from alfred.nucleo.trabajos.lanzador import Lanzador
+    from alfred.nucleo.trabajos.recuperacion import recuperar
     from alfred.nucleo.web.app import crear_app
 
-    with crear_sesiones(crear_motor(config.url_bd))() as sesion:
+    sesiones = crear_sesiones(crear_motor(config.url_bd))
+    interrumpidos = recuperar(sesiones)
+    if interrumpidos:
+        print(f"[aviso] {interrumpidos} trabajo(s) marcados como interrumpidos por el reinicio")
+    with sesiones() as sesion:
         registrar(sesion, "sistema.arranque", f"Alfred {VERSION} arrancado")
         sesion.commit()
+    lanzador = Lanzador(sesiones, config.zona_temporal.resolve(),
+                        max_ligeros=config.max_ligeros, max_pesados=config.max_pesados,
+                        gracia_cancelacion_s=config.gracia_cancelacion_s)
 
-    uvicorn.run(crear_app(), host=config.host, port=config.port)
+    uvicorn.run(crear_app(lanzador), host=config.host, port=config.port)
     return 0
 
 

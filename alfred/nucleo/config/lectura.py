@@ -17,6 +17,9 @@ class Config:
     port: int
     url_bd: str
     zona_temporal: Path
+    max_ligeros: int = 4
+    max_pesados: int = 1
+    gracia_cancelacion_s: float = 10.0
 
 
 def ruta_config() -> Path:
@@ -31,6 +34,7 @@ def cargar(ruta: Path | None = None) -> Config:
         )
     try:
         datos = tomllib.loads(ruta.read_text(encoding="utf-8"))
+        trabajos = datos.get("trabajos", {})
         return Config(
             host=datos["servidor"].get("host", "127.0.0.1"),
             port=int(datos["servidor"].get("port", 8000)),
@@ -38,6 +42,9 @@ def cargar(ruta: Path | None = None) -> Config:
             zona_temporal=Path(
                 datos.get("almacenamiento", {}).get("zona_temporal", "datos/temporal")
             ),
+            max_ligeros=int(trabajos.get("max_ligeros", 4)),
+            max_pesados=int(trabajos.get("max_pesados", 1)),
+            gracia_cancelacion_s=float(trabajos.get("gracia_cancelacion_s", 10)),
         )
     except (tomllib.TOMLDecodeError, KeyError, ValueError) as e:
         raise ErrorConfig(f"Configuración inválida en {ruta}: {e!r}") from e

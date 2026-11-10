@@ -22,6 +22,7 @@ class Trabajo(Base):
     entradas: Mapped[dict] = mapped_column(JSON, default=dict)
     progreso: Mapped[int] = mapped_column(Integer, default=0)  # 0-100
     mensaje_progreso: Mapped[str | None] = mapped_column(String(300))
+    pid: Mapped[int | None] = mapped_column(Integer)  # proceso de trabajo en ejecución
     informe: Mapped[dict | None] = mapped_column(JSON)  # resultados, resumen, fallos parciales
     error_usuario: Mapped[str | None] = mapped_column(Text)  # mensaje claro
     error_tecnico: Mapped[str | None] = mapped_column(Text)  # detalle para el log

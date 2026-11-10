@@ -1,0 +1,7 @@
+id = "espera_y_cuenta"
+nombre = "Espera y cuenta (prueba)"
+descripcion = "Minijob de prueba: cuenta pasos esperando entre cada uno. No es para uso real."
+categoria = "pruebas"
+version = "0.1.0"
+peso = "ligero"
+tiempo_maximo = 120

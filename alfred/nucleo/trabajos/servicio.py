@@ -1,9 +1,12 @@
 """Operaciones sobre trabajos. Es el único sitio que cambia estados."""
+from pathlib import Path
+
 from sqlalchemy.orm import Session
 
 from alfred.nucleo.actividad.registro import registrar
 from alfred.nucleo.datos.modelos import Trabajo, ahora
 from alfred.nucleo.trabajos.estados import Estado, es_final, transicion_valida
+from alfred.nucleo.zona_temporal.rutas import borrar, carpeta_trabajo
 
 
 class TransicionInvalida(Exception):
@@ -49,3 +52,20 @@ def cambiar_estado(sesion: Session, trabajo: Trabajo, destino: Estado, *,
               detalle={"origen": origen.value, "destino": destino.value},
               trabajo_id=trabajo.id)
     sesion.flush()
+
+
+def solicitar_cancelacion(sesion: Session, trabajo: Trabajo, zona_temporal: Path) -> None:
+    """Pendiente: se cancela ya. En curso: pasa a «cancelándose» y el lanzador detiene el proceso."""
+    estado = Estado(trabajo.estado)
+    if estado is Estado.CANCELANDOSE:
+        return
+    if estado is Estado.PENDIENTE:
+        cambiar_estado(sesion, trabajo, Estado.CANCELADO)
+        borrar(carpeta_trabajo(zona_temporal, trabajo.id))
+    else:
+        cambiar_estado(sesion, trabajo, Estado.CANCELANDOSE)
+
+
+def reintentar(sesion: Session, trabajo: Trabajo) -> None:
+    """Solo los trabajos interrumpidos se pueden reintentar."""
+    cambiar_estado(sesion, trabajo, Estado.PENDIENTE)

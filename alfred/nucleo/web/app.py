@@ -1,4 +1,6 @@
 """Aplicación web: interfaz tonta; las decisiones viven en el núcleo."""
+import asyncio
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -19,8 +21,18 @@ def leer_aviso() -> str:
     return ruta.read_text(encoding="utf-8") if ruta.is_file() else NOMBRE
 
 
-def crear_app() -> FastAPI:
-    app = FastAPI(title=NOMBRE, version=VERSION)
+def crear_app(lanzador=None) -> FastAPI:
+    @asynccontextmanager
+    async def ciclo(_app: FastAPI):
+        if lanzador:
+            lanzador.start()
+        try:
+            yield
+        finally:
+            if lanzador:
+                await asyncio.to_thread(lanzador.stop)
+
+    app = FastAPI(title=NOMBRE, version=VERSION, lifespan=ciclo)
     app.mount("/estaticos", StaticFiles(directory=AQUI / "estaticos"), name="estaticos")
 
     def contexto(request: Request, **extra):

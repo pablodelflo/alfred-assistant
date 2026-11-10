@@ -1,0 +1,57 @@
+Metadata-Version: 2.4
+Name: alfred-assistant
+Version: 0.1.0
+Summary: Asistente personal doméstico con minijobs enchufables
+License: GPL-3.0-or-later
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: NOTICE
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn[standard]>=0.30
+Requires-Dist: jinja2>=3.1
+Requires-Dist: psycopg[binary]>=3.2
+Requires-Dist: sqlalchemy>=2.0
+Requires-Dist: alembic>=1.13
+Requires-Dist: python-multipart>=0.0.9
+Requires-Dist: pillow>=10.4
+Requires-Dist: pillow-heif>=0.20
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: httpx>=0.27; extra == "dev"
+Dynamic: license-file
+
+# Alfred Assistant
+
+Asistente personal doméstico en Python con interfaz web. Proyecto personal, GPL-3.0.
+Más contexto en `docs/contexto.md`.
+
+## Requisitos (servidor Linux, siempre encendido)
+- Python 3.13 o superior
+- PostgreSQL 14 o superior
+
+## Instalación
+```bash
+# 1. Base de datos
+sudo -u postgres psql -c "CREATE USER alfred WITH PASSWORD 'CAMBIAME';"
+sudo -u postgres psql -c "CREATE DATABASE alfred OWNER alfred;"
+
+# 2. Entorno e instalación
+python3.13 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+
+# 3. Configuración
+mkdir config && cp config.ejemplo/servidor.ejemplo.toml config/servidor.toml
+# edita config/servidor.toml (contraseña de la base de datos)
+
+# 4. Arranque
+python -m alfred.nucleo
+```
+Abre http://127.0.0.1:8000 (desde fuera de casa, por VPN doméstica): debe verse el catálogo vacío. Si falta algún requisito,
+el arranque lo indica y se detiene.
+
+La ruta de configuración puede cambiarse con la variable `ALFRED_CONFIG`.
+
+## Licencia
+GPL-3.0. Ver `LICENSE` y `NOTICE`.

@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from alfred.nucleo.config.lectura import Config, ErrorConfig, cargar
 
 PYTHON_MINIMO = (3, 13)
-POSTGRES_MINIMO = 14
+# La 14 dejó de recibir correcciones el 12/11/2026. Mínimo: 16; recomendada: 18.
+POSTGRES_MINIMO = 16
 
 
 @dataclass
@@ -44,7 +45,8 @@ def comprobar_postgres(config: Config) -> Resultado:
     except Exception as e:
         return Resultado(False, f"No se pudo conectar a PostgreSQL ({type(e).__name__}). Revisa base_datos.url en la configuración.")
     if version < POSTGRES_MINIMO:
-        return Resultado(False, f"PostgreSQL {version} detectado; se requiere {POSTGRES_MINIMO} o superior.")
+        return Resultado(False, f"PostgreSQL {version} detectado; se requiere {POSTGRES_MINIMO} o superior "
+                                f"(se recomienda la 18).")
     return Resultado(True, f"PostgreSQL {version}")
 
 

@@ -5,7 +5,7 @@ host = "127.0.0.1"
 port = 8000
 
 [base_datos]
-# PostgreSQL 14 o superior
+# PostgreSQL 16 o superior (recomendada la 18)
 url = "postgresql://alfred:CAMBIAME@localhost:5432/alfred"
 
 [almacenamiento]

@@ -38,7 +38,7 @@ def entorno(tmp_path):
 
 
 def datos(**extra):
-    base = {"conversion": "heic_a_jpg", "calidad": "85", "conservar_metadatos": "on", "si_existe": "numerar"}
+    base = {"conversion": "heic_a_jpg", "calidad": "85", "conservar_metadatos": "on"}
     base.update(extra)
     return base
 
@@ -51,8 +51,9 @@ def trabajos(sesiones):
 def test_el_formulario_se_genera_desde_el_manifiesto(entorno):
     cliente, *_ = entorno
     html = cliente.get("/catalogo/conversor_medios").text
+    assert "Si el nombre ya existe" not in html
     for esperado in ("HEIC → JPG", "Calidad del JPG", 'name="ficheros"', "webkitdirectory", 'accept=".heic,.heif"',
-                     "Quitar la ubicación GPS", "Numerar", "Máximo 1000 ficheros", "subida.js"):
+                     "Quitar la ubicación GPS", "Máximo 1000 ficheros", "subida.js"):
         assert esperado in html, esperado
 
 

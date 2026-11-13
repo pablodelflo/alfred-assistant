@@ -5,6 +5,7 @@ description = "Asistente personal doméstico con minijobs enchufables"
 readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "GPL-3.0-or-later" }
+# Requisito del sistema (no se instala con pip): PostgreSQL 16 o superior, recomendada la 18.
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",

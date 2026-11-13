@@ -52,15 +52,3 @@ etiqueta = "Lado mayor máximo en píxeles (0 = no redimensionar)"
 defecto = 0
 minimo = 0
 maximo = 20000
-
-[[entradas]]
-id = "si_existe"
-tipo = "seleccion"
-etiqueta = "Si el nombre ya existe"
-obligatorio = true
-defecto = "numerar"
-opciones = [
-  { valor = "numerar", etiqueta = "Numerar (foto (1).jpg)" },
-  { valor = "omitir", etiqueta = "Omitir el fichero" },
-  { valor = "sobrescribir", etiqueta = "Sobrescribir" },
-]

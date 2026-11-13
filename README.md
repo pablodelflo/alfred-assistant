@@ -5,7 +5,7 @@ Más contexto en `docs/contexto.md`.
 
 ## Requisitos (servidor Linux, siempre encendido)
 - Python 3.13 o superior
-- PostgreSQL 14 o superior
+- PostgreSQL 16 o superior (recomendada la 18)
 
 ## Instalación
 ```bash

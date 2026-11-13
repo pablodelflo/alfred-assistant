@@ -25,6 +25,11 @@ class Config:
     max_fichero_mb: float = 100.0
     max_lote_mb: float = 2048.0
     max_ficheros: int = 1000
+    sesion_dias: float = 30.0
+    cookie_segura: bool = False
+    intentos_max: int = 5
+    bloqueo_minutos: float = 15.0
+    origenes_permitidos: tuple[str, ...] = ()
 
 
 def ruta_config() -> Path:
@@ -51,6 +56,12 @@ def cargar(ruta: Path | None = None) -> Config:
         max_ficheros = int(subidas.get("max_ficheros", 1000))
         if min(max_fichero, max_lote, max_ficheros) <= 0:
             raise ValueError("los límites de [subidas] deben ser mayores que 0")
+        seguridad = datos.get("seguridad", {})
+        sesion_dias = float(seguridad.get("sesion_dias", 30))
+        intentos_max = int(seguridad.get("intentos_max", 5))
+        bloqueo = float(seguridad.get("bloqueo_minutos", 15))
+        if min(sesion_dias, intentos_max, bloqueo) <= 0:
+            raise ValueError("los valores de [seguridad] deben ser mayores que 0")
         if cada <= 0:
             raise ValueError("almacenamiento.limpieza_cada_minutos debe ser mayor que 0")
         return Config(
@@ -68,6 +79,11 @@ def cargar(ruta: Path | None = None) -> Config:
             max_fichero_mb=max_fichero,
             max_lote_mb=max_lote,
             max_ficheros=max_ficheros,
+            sesion_dias=sesion_dias,
+            cookie_segura=bool(seguridad.get("cookie_segura", False)),
+            intentos_max=intentos_max,
+            bloqueo_minutos=bloqueo,
+            origenes_permitidos=tuple(str(o) for o in seguridad.get("origenes_permitidos", ())),
         )
     except (tomllib.TOMLDecodeError, KeyError, ValueError) as e:
         raise ErrorConfig(f"Configuración inválida en {ruta}: {e!r}") from e

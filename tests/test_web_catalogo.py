@@ -19,6 +19,8 @@ from alfred.nucleo.trabajos.lanzador import Lanzador  # noqa: E402
 from alfred.nucleo.web.app import crear_app  # noqa: E402
 from alfred.nucleo.zona_temporal.rutas import carpeta_trabajo  # noqa: E402
 
+from ayudas import cliente_web, iniciar_sesion  # noqa: E402
+
 pillow_heif.register_heif_opener()
 
 
@@ -34,7 +36,9 @@ def entorno(tmp_path):
     Base.metadata.create_all(motor)
     sesiones = crear_sesiones(motor)
     config = Config(host="x", port=1, url_bd="", zona_temporal=tmp_path / "zona")
-    return TestClient(crear_app(sesiones=sesiones, config=config)), sesiones, config, tmp_path
+    cliente = cliente_web(crear_app(sesiones=sesiones, config=config))
+    iniciar_sesion(cliente, sesiones)
+    return cliente, sesiones, config, tmp_path
 
 
 def datos(**extra):

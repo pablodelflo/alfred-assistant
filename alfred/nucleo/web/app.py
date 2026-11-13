@@ -42,6 +42,7 @@ def crear_app(*servicios, sesiones=None, config=None) -> FastAPI:
 
     def contexto(request: Request, **extra):
         return {"request": request, "nombre": NOMBRE, "version": VERSION,
+                "usuario": getattr(request.state, "usuario", None),
                 "aviso_corto": leer_aviso().splitlines()[1] if leer_aviso() else "", **extra}
 
     @app.get("/", response_class=HTMLResponse)
@@ -60,6 +61,8 @@ def crear_app(*servicios, sesiones=None, config=None) -> FastAPI:
         return RedirectResponse("/estaticos/favicon.svg")
 
     if sesiones is not None and config is not None:
+        from alfred.nucleo.web import acceso
+        acceso.instalar(app, sesiones, config, PLANTILLAS, contexto)
         from alfred.nucleo.web.rutas_catalogo import crear_router as router_catalogo
         from alfred.nucleo.web.rutas_trabajos import crear_router as router_trabajos
         app.include_router(router_catalogo(sesiones, config, PLANTILLAS, contexto))

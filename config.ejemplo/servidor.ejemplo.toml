@@ -28,3 +28,14 @@ gracia_cancelacion_s = 10
 max_fichero_mb = 100
 max_lote_mb = 2048
 max_ficheros = 1000
+
+[seguridad]
+# Días que dura una sesión iniciada
+sesion_dias = 30
+# Pon true si accedes a Alfred por HTTPS (la cookie de sesión solo viajará cifrada)
+cookie_segura = false
+# Intentos fallidos de acceso antes del bloqueo temporal, y duración del bloqueo
+intentos_max = 5
+bloqueo_minutos = 15
+# Nombres de host extra desde los que se aceptan formularios (p. ej. detrás de un proxy inverso)
+origenes_permitidos = []

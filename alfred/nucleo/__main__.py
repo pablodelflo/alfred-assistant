@@ -34,7 +34,10 @@ def main() -> int:
     interrumpidos = recuperar(sesiones)
     if interrumpidos:
         print(f"[aviso] {interrumpidos} trabajo(s) marcados como interrumpidos por el reinicio")
+    from alfred.nucleo.usuarios.servicio import hay_usuarios
     with sesiones() as sesion:
+        if not hay_usuarios(sesion):
+            print("[aviso] No hay administrador: nadie podrá entrar. Créalo con: python -m alfred.nucleo.usuarios crear")
         registrar(sesion, "sistema.arranque", f"Alfred {VERSION} arrancado")
         sesion.commit()
     zona = config.zona_temporal.resolve()

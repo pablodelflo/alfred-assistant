@@ -46,3 +46,24 @@ class Actividad(Base):
     trabajo_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("trabajos.id", ondelete="SET NULL"), index=True
     )
+
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    nombre: Mapped[str] = mapped_column(String(100), unique=True)  # en minúsculas
+    clave_hash: Mapped[str] = mapped_column(String(300))
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=ahora)
+    ultimo_acceso: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Sesion(Base):
+    """Sesión web. Se guarda el hash del token, nunca el token."""
+
+    __tablename__ = "sesiones"
+
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id", ondelete="CASCADE"), index=True)
+    creada_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=ahora)
+    expira_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))

@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+
+from ayudas import cliente_web, iniciar_sesion
 from sqlalchemy import create_engine
 
 import alfred.nucleo.minijobs.registro as reg
@@ -23,7 +25,9 @@ def web(tmp_path, monkeypatch):
     sesiones = crear_sesiones(motor)
     config = Config(host="x", port=1, url_bd="", zona_temporal=tmp_path / "zona")
     app = crear_app(sesiones=sesiones, config=config)
-    return TestClient(app), sesiones
+    cliente = cliente_web(app)
+    iniciar_sesion(cliente, sesiones)
+    return cliente, sesiones
 
 
 def nuevo(sesiones, destino=None, **extra):

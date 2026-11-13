@@ -70,6 +70,10 @@ def limpiar(sesiones: sessionmaker[Session], zona: Path, horas_defecto: float, *
                       trabajo_id=trabajo.id)
             s.commit()
             eliminadas += 1
+    with sesiones() as s:  # sesiones web caducadas
+        from alfred.nucleo.usuarios.servicio import limpiar_sesiones_caducadas
+        limpiar_sesiones_caducadas(s, ahora)
+        s.commit()
     return eliminadas + _limpiar_huerfanas(sesiones, zona, ahora)
 
 

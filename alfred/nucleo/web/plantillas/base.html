@@ -11,7 +11,10 @@
 <body>
   <header>
     <a href="/">{{ nombre }}</a>
+    {% if usuario %}
     <nav><a href="/">Catálogo</a> · <a href="/trabajos">Trabajos</a></nav>
+    <form method="post" action="/salir" class="salir"><button>Salir</button></form>
+    {% endif %}
   </header>
   <main>{% block contenido %}{% endblock %}</main>
   <footer>
